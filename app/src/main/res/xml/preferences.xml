@@ -1,0 +1,85 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+            app:iconSpaceReserved="false"
+            app:title="@string/settings_category_bol_api">
+
+        <EditTextPreference
+                app:iconSpaceReserved="false"
+                app:key="bol_client_id"
+                app:singleLineTitle="false"
+                app:title="@string/settings_bol_client_id" />
+
+        <EditTextPreference
+                app:iconSpaceReserved="false"
+                app:key="bol_client_secret"
+                app:singleLineTitle="false"
+                app:title="@string/settings_bol_client_secret" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+            app:iconSpaceReserved="false"
+            app:title="@string/settings_category_buy_box">
+
+        <EditTextPreference
+                app:iconSpaceReserved="false"
+                app:key="bol_seller_name"
+                app:singleLineTitle="false"
+                app:title="@string/settings_bol_seller_name" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+            app:iconSpaceReserved="false"
+            app:title="@string/settings_category_notifications">
+
+        <DropDownPreference
+                app:defaultValue="0"
+                app:entries="@array/notifications_type_readable"
+                app:entryValues="@array/notifications_type"
+                app:iconSpaceReserved="false"
+                app:key="notifications_type"
+                app:singleLineTitle="false"
+                app:summary="%s"
+                app:title="@string/settings_notification_type" />
+
+        <EditTextPreference
+                app:iconSpaceReserved="false"
+                app:isPreferenceVisible="false"
+                app:key="telegram_bot_token"
+                app:singleLineTitle="false"
+                app:title="@string/settings_telegram_bot_token" />
+
+        <EditTextPreference
+                app:iconSpaceReserved="false"
+                app:isPreferenceVisible="false"
+                app:key="telegram_chat_id"
+                app:singleLineTitle="false"
+                app:title="@string/settings_telegram_chat_id" />
+
+        <SwitchPreferenceCompat
+                app:iconSpaceReserved="false"
+                app:key="buy_box_notifications"
+                app:singleLineTitle="false"
+                app:title="@string/settings_buy_box_notifications" />
+
+        <SwitchPreferenceCompat
+                app:iconSpaceReserved="false"
+                app:key="order_notifications"
+                app:singleLineTitle="false"
+                app:title="@string/settings_order_notifications" />
+
+        <ListPreference
+                app:defaultValue="30"
+                app:entries="@array/bol_poll_frequencies_readable"
+                app:entryValues="@array/bol_poll_frequencies"
+                app:iconSpaceReserved="false"
+                app:key="bol_poll_frequency"
+                app:singleLineTitle="false"
+                app:summary="Elke %s"
+                app:title="@string/settings_bol_poll_frequency" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

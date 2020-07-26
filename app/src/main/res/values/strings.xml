@@ -1,0 +1,44 @@
+<resources>
+    <string name="app_name">LvBuddy</string>
+
+    <string name="notification_channel_name">Notificaties</string>
+    <string name="notification_channel_description">Bestellingen en koopblok status</string>
+
+    <string name="stocks_title">Voorraad</string>
+    <string name="stocks_full_title">Voorraad (%s/%s)</string>
+    <string name="stocks_generic_error">Er is iets misgegaan bij het ophalen van de voorraad, probeer het later opnieuw</string>
+    <string name="stocks_no_credentials_error">Vul de API credentials in op het instellingenscherm en probeer opnieuw</string>
+    <string name="stocks_search_error">Geen producten gevonden, probeer een andere zoekopdracht</string>
+    <string name="stocks_no_stock_error">Er zijn geen producten gevonden in je LVB voorraad</string>
+
+    <string name="order_message_text">💰%s nieuwe bestelling(en) van %s, de huidige voorraad is %s.💰</string>
+    <string name="buy_box_gained_message_text">%s heeft nu het koopblok😊</string>
+    <string name="buy_box_lost_message_text">%s heeft het koopblok niet meer☹️</string>
+
+    <string name="ean_copied_message">EAN gekopieerd️</string>
+
+    <string name="settings_category_notifications">Notificaties</string>
+    <string name="settings_category_buy_box">Koopblok</string>
+    <string name="settings_category_bol_api">Bol.com API (verplicht)</string>
+
+    <string name="settings_buy_box_notifications">Notificaties bij het verliezen/verkrijgen van een koopblok</string>
+    <string name="settings_order_notifications">Notificaties bij bestellingen</string>
+
+    <string name="settings_telegram_bot_token">Telegram bot token</string>
+    <string name="settings_telegram_chat_id">Telegram chat id</string>
+
+    <string name="settings_bol_client_id">Retailer API client id</string>
+    <string name="settings_bol_client_secret">Retailer API client secret</string>
+
+    <string name="settings_bol_seller_name">Winkelnaam op bol.com</string>
+
+    <string name="settings_bol_poll_frequency">Update frequentie</string>
+
+    <string name="settings_notification_type">Type notificaties</string>
+    <string name="settings_notifications_error">Vul alle benodigde informatie in!</string>
+
+    <string name="settings_title">Instellingen</string>
+    <string name="settings_search">Zoeken</string>
+    <string name="settings_search_hint">Zoek een product</string>
+
+</resources>
