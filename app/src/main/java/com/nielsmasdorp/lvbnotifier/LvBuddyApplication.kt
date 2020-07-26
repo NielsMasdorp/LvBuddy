@@ -4,12 +4,12 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import androidx.core.app.NotificationManagerCompat
-import com.nielsmasdorp.lvbnotifier.di.appModule
+import com.nielsmasdorp.lvbnotifier.di.*
 import com.nielsmasdorp.lvbnotifier.work.StateUpdateScheduler
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.android.startKoin
 
-class LVBNotifierApplication : Application() {
+class LvBuddyApplication : Application() {
 
     private val notificationScheduler: StateUpdateScheduler by inject()
 
@@ -17,7 +17,19 @@ class LVBNotifierApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        startKoin(this, listOf(appModule))
+        startKoin(
+            this,
+            listOf(
+                settingsModule,
+                notificationsModule,
+                stockModule,
+                buyBoxModule,
+                clipBoardModule,
+                authModule,
+                networkModule,
+                uiModule
+            )
+        )
         setupNotificationChannel()
         notificationScheduler.schedule()
     }

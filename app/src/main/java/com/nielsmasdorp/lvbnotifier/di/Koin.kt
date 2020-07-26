@@ -3,6 +3,7 @@ package com.nielsmasdorp.lvbnotifier.di
 import android.content.Context
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.WorkManager
+import com.babylon.certificatetransparency.certificateTransparencyInterceptor
 import com.nielsmasdorp.domain.auth.TokenManager
 import com.nielsmasdorp.domain.buybox.BuyBoxRepository
 import com.nielsmasdorp.domain.clipboard.Clipboard
@@ -45,7 +46,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.io.File
 
-fun createLVBStockService(client: OkHttpClient): StockService {
+private fun createLVBStockService(client: OkHttpClient): StockService {
     return Retrofit.Builder()
         .baseUrl("https://api.bol.com/retailer/")
         .client(client)
@@ -54,7 +55,7 @@ fun createLVBStockService(client: OkHttpClient): StockService {
         .create(StockService::class.java)
 }
 
-fun createMessageService(client: OkHttpClient): TelegramService {
+private fun createMessageService(client: OkHttpClient): TelegramService {
     return Retrofit.Builder()
         .baseUrl("https://api.telegram.org")
         .client(client)
@@ -62,7 +63,7 @@ fun createMessageService(client: OkHttpClient): TelegramService {
         .create(TelegramService::class.java)
 }
 
-fun createBuyBoxService(client: OkHttpClient): BuyBoxService {
+private fun createBuyBoxService(client: OkHttpClient): BuyBoxService {
     return Retrofit.Builder()
         .baseUrl("https://www.bol.com/nl/rnwy/artikelen/")
         .client(client)
@@ -71,29 +72,54 @@ fun createBuyBoxService(client: OkHttpClient): BuyBoxService {
         .create(BuyBoxService::class.java)
 }
 
-fun getCacheDir(context: Context): File {
+private fun getCacheDir(context: Context): File {
     return File(context.applicationContext.cacheDir, "http-cache")
 }
 
-val appModule = module {
-
+val settingsModule = module {
     single<SharedPrefsDataStore> { EncryptedSharedPreferenceDataStore(androidApplication()) }
-
-    single { NotificationManagerCompat.from(androidApplication()) }
-
-    single<LastKnownStockRepository> {
-        SharedPreferencesLastKnownStockRepository(
-            get()
-        )
-    }
-    single<BuyBoxRepository> {
-        ScrapeBuyBoxRepository(
-            createBuyBoxService(get("buyBoxClient")),
-            get()
-        )
-    }
     single<SettingsRepository> {
         SharedPreferencesSettingsRepository(
+            get()
+        )
+    }
+}
+
+val notificationsModule = module {
+    single { NotificationManagerCompat.from(androidApplication()) }
+    single<NotificationHandler>("telegramNotificationHandler", definition = {
+        TelegramNotificationHandler(
+            createMessageService(get("defaultClient")),
+            get()
+        )
+    })
+    single<NotificationHandler>("systemNotificationHandler", definition = {
+        SystemNotificationHandler(get(), get())
+    })
+    single {
+        SendNotification(
+            get("telegramNotificationHandler"),
+            get("systemNotificationHandler"),
+            get()
+        )
+    }
+    single { WorkManager.getInstance(androidApplication()) }
+    single {
+        StateUpdateScheduler(
+            get(),
+            get(),
+            get()
+        )
+    }
+    single { ShouldPoll(get(), get()) }
+    single { CanSendNotifications(get()) }
+    single { CanSendBuyBoxNotifications(get(), get()) }
+    single { CheckNewLVBState(get(), get(), get(), get(), get(), get(), get(), get()) }
+}
+
+val stockModule = module {
+    single<LastKnownStockRepository> {
+        SharedPreferencesLastKnownStockRepository(
             get()
         )
     }
@@ -103,38 +129,29 @@ val appModule = module {
             get()
         )
     }
-    single<NotificationHandler>("telegramNotificationHandler") {
-        TelegramNotificationHandler(
-            createMessageService(get("defaultClient")),
-            get()
-        )
-    }
-    single<NotificationHandler>("systemNotificationHandler") {
-        SystemNotificationHandler(get(), get())
-    }
-    single<MessageProvider> { AndroidMessageProvider(androidApplication()) }
-    single<Clipboard> { AndroidClipboard(androidApplication()) }
     single { GetLastKnownStock(get()) }
     single { SetLastKnownStock(get()) }
-    single { GetBuyBoxStatus(get()) }
-    single { SetBuyBoxStatus(get()) }
     single { GetStock(get()) }
-    single { SaveProductEAN(get()) }
-    single { ShouldPoll(get(), get()) }
     single { CanShowStock(get()) }
-    single { CanSendNotifications(get()) }
-    single { CanSendBuyBoxNotifications(get(), get()) }
+}
 
-    single { CheckNewLVBState(get(), get(), get(), get(), get(), get(), get(), get()) }
-
-    single {
-        SendNotification(
-            get("telegramNotificationHandler"),
-            get("systemNotificationHandler"),
+val buyBoxModule = module {
+    single<BuyBoxRepository> {
+        ScrapeBuyBoxRepository(
+            createBuyBoxService(get("buyBoxClient")),
             get()
         )
     }
+    single { GetBuyBoxStatus(get()) }
+    single { SetBuyBoxStatus(get()) }
+}
 
+val clipBoardModule = module {
+    single { SaveProductEAN(get()) }
+    single<Clipboard> { AndroidClipboard(androidApplication()) }
+}
+
+val authModule = module {
     single<AuthService> {
         Retrofit.Builder()
             .baseUrl("https://login.bol.com/")
@@ -150,23 +167,32 @@ val appModule = module {
             settingsRepository = get()
         )
     }
+}
 
+val networkModule = module {
+    single("certTransparencyInterceptor", definition = {
+        certificateTransparencyInterceptor {
+            // Enable for all hosts
+            +"*.*"
+        }
+    })
     single("defaultClient", definition = {
         OkHttpClient.Builder().apply {
+            addNetworkInterceptor(get("certTransparencyInterceptor"))
             //addInterceptor(ChuckInterceptor(androidApplication()))
         }.build()
     })
-
     single("buyBoxClient", definition = {
         OkHttpClient.Builder().apply {
+            addNetworkInterceptor(get("certTransparencyInterceptor"))
             addNetworkInterceptor(CacheInterceptor())
             cache(get())
             //addInterceptor(ChuckInterceptor(androidApplication()))
         }.build()
     })
-
     single("stockClient", definition = {
         OkHttpClient.Builder().apply {
+            addNetworkInterceptor(get("certTransparencyInterceptor"))
             addNetworkInterceptor(CacheInterceptor())
             addInterceptor(OAuth2Interceptor(get()))
             authenticator(OAuth2Authenticator(get()))
@@ -174,21 +200,13 @@ val appModule = module {
             addInterceptor(ChuckInterceptor(androidApplication()))
         }.build()
     })
-
     single {
         Cache(getCacheDir(get()), 10 * 1024 * 1024.toLong()) // 10 MiB
     }
+}
 
-    single { WorkManager.getInstance(androidApplication()) }
-    single {
-        StateUpdateScheduler(
-            get(),
-            get(),
-            get()
-        )
-    }
-
+val uiModule = module {
+    single<MessageProvider> { AndroidMessageProvider(androidApplication()) }
     viewModel { StockViewModel(get(), get(), get(), get()) }
-
     viewModel { SettingsViewModel(get(), get(), get(), get(), get()) }
 }

@@ -10,7 +10,8 @@
 - Stuurt notificaties als je voorraad/koopblok status verandert
 - Optie om notificaties naar een Telegram (groeps)chat te sturen
 - Je Bol.com credentials worden versleuteld opgeslagen op je telefoon en verlaten je telefoon nooit
-- Dark mode
+- Versleutelde verbinding met Bol.com (SSL en Certificate Transparency check)
+- Donker thema
 - Kopieer snel een EAN door lang op een product te drukken
 - Zie de volledige product naam door op een product te drukken
 

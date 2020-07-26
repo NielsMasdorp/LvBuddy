@@ -6,7 +6,7 @@ import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.nielsmasdorp.domain.notifications.NotificationHandler
-import com.nielsmasdorp.lvbnotifier.LVBNotifierApplication.Companion.NOTIFICATION_CHANNEL_ID
+import com.nielsmasdorp.lvbnotifier.LvBuddyApplication.Companion.NOTIFICATION_CHANNEL_ID
 import com.nielsmasdorp.lvbnotifier.R
 import com.nielsmasdorp.lvbnotifier.presentation.stock.StockActivity
 import java.util.*
