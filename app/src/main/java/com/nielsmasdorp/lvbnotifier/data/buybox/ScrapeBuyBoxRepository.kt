@@ -13,12 +13,8 @@ class ScrapeBuyBoxRepository(
 ) : BuyBoxRepository {
 
     override suspend fun hasBuyBox(ean: String): Boolean {
-        if (settingsRepository.getSellerName().isBlank()) return false
-        return buyBoxService.getProductPageHtml(ean).contains(createSellerData())
-    }
-
-    private suspend fun createSellerData(): String {
         val sellerName = settingsRepository.getSellerName()
-        return "data-no-translate=\"true\">$sellerName"
+        if (sellerName.isBlank()) return false
+        return buyBoxService.getProductPageHtml(ean).contains(sellerName)
     }
 }

@@ -197,7 +197,7 @@ val networkModule = module {
             addInterceptor(OAuth2Interceptor(get()))
             authenticator(OAuth2Authenticator(get()))
             cache(get())
-            addInterceptor(ChuckInterceptor(androidApplication()))
+            //addInterceptor(ChuckInterceptor(androidApplication()))
         }.build()
     })
     single {
