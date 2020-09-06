@@ -15,6 +15,12 @@ class ScrapeBuyBoxRepository(
     override suspend fun hasBuyBox(ean: String): Boolean {
         val sellerName = settingsRepository.getSellerName()
         if (sellerName.isBlank()) return false
-        return buyBoxService.getProductPageHtml(ean).contains(sellerName)
+        return buyBoxService.getProductPageHtml(ean).contains(getPageData(sellerName))
+    }
+
+
+    private fun getPageData(sellerName: String): String {
+        return " data-modal-size=\"full\">\n" +
+                "          $sellerName"
     }
 }
