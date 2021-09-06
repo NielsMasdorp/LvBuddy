@@ -1,4 +1,4 @@
-# LvBuddy
+# LvBuddy [NOT MAINTAINED]
 
 ![Alt text](/screenshots/screenshot2.png?raw=true "Voorraad")
 ![Alt text](/screenshots/screenshot1.png?raw=true "Instellingen")
